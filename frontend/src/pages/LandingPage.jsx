@@ -358,7 +358,7 @@ export default function LandingPage() {
                   <Github size={14} /> GitHub Repository
                 </a>
                 <a 
-                  href="https://vercel.com" 
+                  href="https://frontend-five-tan-77.vercel.app" 
                   target="_blank" 
                   rel="noreferrer" 
                   className="btn btn-sm btn-outline-light d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill"

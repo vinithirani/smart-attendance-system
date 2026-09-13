@@ -1,12 +1,11 @@
 # Smart Attendance System Using Face Recognition
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
-![CI Pipeline](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF?logo=github-actions&logoColor=white)
-![Frontend](https://img.shields.io/badge/Frontend-Vercel_Ready-000000?logo=vercel&logoColor=white)
-![License](https://img.shields.io/badge/License-Academic_Evaluation-blue)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel%20Production-00df8f?style=for-the-badge&logo=vercel&logoColor=white)](https://frontend-five-tan-77.vercel.app)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-vinithirani%2Fsmart--attendance--system-181717?style=for-the-badge&logo=github)](https://github.com/vinithirani/smart-attendance-system)
 
 **Domain:** AI Automation  
 **Academic Degree Project:** Master of Computer Applications (MCA)  
+**Live URL:** [https://frontend-five-tan-77.vercel.app](https://frontend-five-tan-77.vercel.app)  
 **Architecture:** React.js (Frontend) + Python FastAPI (Backend) + PostgreSQL (Database) + Face AI Computer Vision Engine
 
 ---

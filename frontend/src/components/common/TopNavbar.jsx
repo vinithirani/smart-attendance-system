@@ -43,15 +43,15 @@ export default function TopNavbar({ setMobileOpen }) {
 
         {/* Vercel Cloud Badge */}
         <a 
-          href="https://vercel.com" 
+          href="https://frontend-five-tan-77.vercel.app" 
           target="_blank" 
           rel="noreferrer"
           className="d-none d-xl-flex align-items-center gap-1 text-decoration-none px-2 py-1 bg-dark text-white rounded-pill border"
           style={{ fontSize: '0.72rem', fontWeight: 600 }}
-          title="Deployed on Vercel Cloud"
+          title="Live on Vercel Cloud"
         >
           <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#00df8f' }}></span>
-          <span>▲ Vercel Edge</span>
+          <span>▲ Live on Vercel</span>
         </a>
       </div>
 

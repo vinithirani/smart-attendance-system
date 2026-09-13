@@ -237,8 +237,8 @@ export default function LoginPage() {
             <a href="https://github.com/vinithirani/smart-attendance-system" target="_blank" rel="noreferrer" className="text-decoration-none text-muted d-flex align-items-center gap-1 hover-text-primary">
               <Github size={14} /> GitHub
             </a>
-            <a href="https://vercel.com" target="_blank" rel="noreferrer" className="text-decoration-none text-muted d-flex align-items-center gap-1 hover-text-primary">
-              ▲ Vercel
+            <a href="https://frontend-five-tan-77.vercel.app" target="_blank" rel="noreferrer" className="text-decoration-none text-muted d-flex align-items-center gap-1 hover-text-primary">
+              ▲ Live on Vercel
             </a>
           </div>
         </div>
