@@ -53,6 +53,8 @@ const INITIAL_FACULTY = [
 
 const INITIAL_STUDENTS = [
   // MCA (Course 1, Sem 2, Div A)
+  { id: 101, student_id: "STU-MCA-509", enrollment_number: "EN2024MCA509", name: "Bhavesh Gohil", course_id: 1, course_name: "MCA", semester: 2, division: "A", email: "bhavesh.gohil@student.edu", phone: "+91 91234 56701", gender: "Male", face_enrolled: true, attendance_rate: 98.8, status: "active" },
+  { id: 102, student_id: "STU-MCA-846", enrollment_number: "EN2024MCA846", name: "Vinit Hirani", course_id: 1, course_name: "MCA", semester: 2, division: "A", email: "vinit.hirani@student.edu", phone: "+91 91234 56702", gender: "Male", face_enrolled: true, attendance_rate: 97.5, status: "active" },
   { id: 1, student_id: "STU-MCA-001", enrollment_number: "EN2024MCA001", name: "Aarav Mehta", course_id: 1, course_name: "MCA", semester: 2, division: "A", email: "aarav.mehta@student.edu", phone: "+91 91234 56780", gender: "Male", face_enrolled: true, attendance_rate: 94.2, status: "active" },
   { id: 2, student_id: "STU-MCA-002", enrollment_number: "EN2024MCA002", name: "Ananya Sharma", course_id: 1, course_name: "MCA", semester: 2, division: "A", email: "ananya.sharma@student.edu", phone: "+91 91234 56781", gender: "Female", face_enrolled: true, attendance_rate: 96.0, status: "active" },
   { id: 3, student_id: "STU-MCA-003", enrollment_number: "EN2024MCA003", name: "Rohan Verma", course_id: 1, course_name: "MCA", semester: 2, division: "A", email: "rohan.verma@student.edu", phone: "+91 91234 56782", gender: "Male", face_enrolled: true, attendance_rate: 88.5, status: "active" },
@@ -90,24 +92,24 @@ const INITIAL_SESSIONS = [
     division: "A",
     subject: "Cloud Computing & AI Architecture",
     date: new Date().toISOString().split("T")[0],
-    start_time: "08:00:00",
-    end_time: "08:50:00",
+    start_time: "08:00:00 AM",
+    end_time: null,
     total_enrolled: 6,
-    present_count: 5,
-    absent_count: 1,
+    present_count: 3,
+    absent_count: 3,
     unknown_count: 0,
-    status: "completed"
+    status: "active"
   }
 ];
 
 const INITIAL_SESSION_RECORDS = {
   1: [
-    { student_id: 1, status: "present", recognition_time: "08:02:15", confidence: 0.9942, recognition_method: "Face Recognition AI" },
-    { student_id: 2, status: "present", recognition_time: "08:03:10", confidence: 0.9890, recognition_method: "Face Recognition AI" },
-    { student_id: 3, status: "present", recognition_time: "08:04:45", confidence: 0.9912, recognition_method: "Face Recognition AI" },
-    { student_id: 4, status: "present", recognition_time: "08:05:30", confidence: 0.9975, recognition_method: "Face Recognition AI" },
-    { student_id: 6, status: "present", recognition_time: "08:06:12", confidence: 0.9880, recognition_method: "Face Recognition AI" },
-    { student_id: 5, status: "absent", recognition_time: "-", confidence: null, recognition_method: "Pending AI Scan" }
+    { student_id: 1, status: "present", recognition_time: "08:02:15 AM", confidence: 0.9942, recognition_method: "Face Recognition AI" },
+    { student_id: 2, status: "present", recognition_time: "08:03:10 AM", confidence: 0.9890, recognition_method: "Face Recognition AI" },
+    { student_id: 3, status: "present", recognition_time: "08:04:45 AM", confidence: 0.9912, recognition_method: "Face Recognition AI" },
+    { student_id: 4, status: "absent", recognition_time: "-", confidence: null, recognition_method: "Pending AI Scan" },
+    { student_id: 5, status: "absent", recognition_time: "-", confidence: null, recognition_method: "Pending AI Scan" },
+    { student_id: 6, status: "absent", recognition_time: "-", confidence: null, recognition_method: "Pending AI Scan" }
   ]
 };
 
@@ -131,10 +133,17 @@ class MockDataService {
         this.courses = parsed.courses || INITIAL_COURSES;
         this.faculty = parsed.faculty || INITIAL_FACULTY;
         this.students = parsed.students || INITIAL_STUDENTS;
+        // Ensure Bhavesh and Vinit are always present
+        INITIAL_STUDENTS.forEach(initSt => {
+          if (!this.students.some(s => s.id === initSt.id || s.enrollment_number === initSt.enrollment_number)) {
+            this.students.unshift(initSt);
+          }
+        });
         this.facultyAttendance = parsed.facultyAttendance || INITIAL_FACULTY_ATTENDANCE;
         this.sessions = parsed.sessions || INITIAL_SESSIONS;
         this.sessionRecords = parsed.sessionRecords || INITIAL_SESSION_RECORDS;
         this.auditLogs = parsed.auditLogs || INITIAL_AUDIT_LOGS;
+        this.lastEnrolledStudentId = parsed.lastEnrolledStudentId || null;
         return;
       } catch (e) {
         console.error("Failed to parse saved state, resetting...", e);
@@ -148,6 +157,7 @@ class MockDataService {
     this.sessions = [...INITIAL_SESSIONS];
     this.sessionRecords = { ...INITIAL_SESSION_RECORDS };
     this.auditLogs = [...INITIAL_AUDIT_LOGS];
+    this.lastEnrolledStudentId = null;
     this.saveState();
   }
 
@@ -160,7 +170,8 @@ class MockDataService {
       facultyAttendance: this.facultyAttendance,
       sessions: this.sessions,
       sessionRecords: this.sessionRecords,
-      auditLogs: this.auditLogs
+      auditLogs: this.auditLogs,
+      lastEnrolledStudentId: this.lastEnrolledStudentId
     }));
   }
 
@@ -327,15 +338,49 @@ class MockDataService {
       status: "active"
     };
     this.students.push(newStudent);
-    this.logAudit("faculty", "REGISTER_STUDENT", "student", String(id), `Registered ${data.name} (${data.student_id})`);
+    this.logAudit("admin", "REGISTER_STUDENT", "student", String(id), `Registered ${data.name} (${data.student_id})`);
     this.saveState();
     return newStudent;
+  }
+
+  updateStudent(studentId, data) {
+    const id = Number(studentId);
+    const index = this.students.findIndex(s => s.id === id);
+    if (index === -1) throw new Error("Student not found");
+
+    const course = data.course_id ? this.courses.find(c => c.id === Number(data.course_id)) : null;
+
+    this.students[index] = {
+      ...this.students[index],
+      ...data,
+      id,
+      course_id: data.course_id !== undefined ? Number(data.course_id) : this.students[index].course_id,
+      course_name: course ? course.course_code : (data.course_name || this.students[index].course_name),
+      semester: data.semester !== undefined ? Number(data.semester) : this.students[index].semester,
+      division: data.division !== undefined ? data.division.toUpperCase() : this.students[index].division
+    };
+
+    this.logAudit("admin", "UPDATE_STUDENT", "student", String(id), `Updated details for ${this.students[index].name} (${this.students[index].student_id})`);
+    this.saveState();
+    return this.students[index];
+  }
+
+  deleteStudent(studentId) {
+    const id = Number(studentId);
+    const index = this.students.findIndex(s => s.id === id);
+    if (index === -1) throw new Error("Student not found");
+
+    const deleted = this.students.splice(index, 1)[0];
+    this.logAudit("admin", "DELETE_STUDENT", "student", String(id), `Deleted student record ${deleted.name} (${deleted.student_id})`);
+    this.saveState();
+    return { success: true, message: `Student ${deleted.name} deleted successfully` };
   }
 
   enrollStudentFace(studentId) {
     const st = this.students.find(s => s.id === Number(studentId));
     if (!st) throw new Error("Student not found");
     st.face_enrolled = true;
+    this.lastEnrolledStudentId = st.id;
     this.logAudit("faculty", "FACE_ENROLLMENT_COMPLETED", "student", String(st.id), `Face biometrics enrolled for ${st.name}`);
     this.saveState();
     return {
@@ -413,6 +458,25 @@ class MockDataService {
     }
 
     // CASE 2: MATCHED STUDENT IN THIS COURSE
+    let targetStudent = null;
+
+    if (targetStudentId) {
+      const student = this.students.find(s => s.id === Number(targetStudentId));
+      if (!student || !student.face_enrolled) {
+        session.unknown_count = (session.unknown_count || 0) + 1;
+        this.saveState();
+        return {
+          matched: false,
+          is_unknown: true,
+          already_marked: false,
+          student: null,
+          confidence: 0.1250,
+          message: `UNKNOWN PERSON: Face biometrics not enrolled for ${student?.name || 'this student'}. Attendance not marked.`
+        };
+      }
+      targetStudent = student;
+    }
+
     const eligibleStudents = this.students.filter(
       s => s.course_id === session.course_id && 
            s.semester === session.semester && 
@@ -422,29 +486,36 @@ class MockDataService {
     );
 
     if (eligibleStudents.length === 0) {
+      session.unknown_count = (session.unknown_count || 0) + 1;
+      this.saveState();
       return {
         matched: false,
         is_unknown: true,
         already_marked: false,
         student: null,
         confidence: 0.2,
-        message: "UNKNOWN PERSON: No enrolled students found for this class."
+        message: "UNKNOWN PERSON: No face-enrolled students registered for this class."
       };
     }
 
-    let targetStudent = null;
-    if (targetStudentId) {
-      targetStudent = eligibleStudents.find(s => s.id === Number(targetStudentId));
-    }
-    
-    // If not specified or already present, pick the next absent enrolled student
+    // If target not set, prioritize last enrolled student or next absent enrolled student
     if (!targetStudent) {
-      const absentRec = records.find(r => r.status === "absent");
-      if (absentRec) {
-        targetStudent = eligibleStudents.find(s => s.id === absentRec.student_id);
+      if (this.lastEnrolledStudentId) {
+        const lastEnrolled = eligibleStudents.find(s => s.id === Number(this.lastEnrolledStudentId));
+        const lastRec = lastEnrolled ? records.find(r => r.student_id === lastEnrolled.id) : null;
+        if (lastEnrolled && (!lastRec || lastRec.status === "absent")) {
+          targetStudent = lastEnrolled;
+        }
       }
+
       if (!targetStudent) {
-        targetStudent = eligibleStudents[0];
+        const absentRec = records.find(r => r.status === "absent");
+        if (absentRec) {
+          targetStudent = eligibleStudents.find(s => s.id === absentRec.student_id);
+        }
+        if (!targetStudent) {
+          targetStudent = eligibleStudents[0];
+        }
       }
     }
 
@@ -515,6 +586,13 @@ class MockDataService {
       return { success: true };
     }
     throw new Error("Record not found");
+  }
+
+  getActiveSession(facultyId = null) {
+    if (facultyId) {
+      return this.sessions.find(s => s.status === "active" && s.faculty_id === Number(facultyId)) || null;
+    }
+    return this.sessions.find(s => s.status === "active") || null;
   }
 
   endAttendanceSession(sessionId, user) {

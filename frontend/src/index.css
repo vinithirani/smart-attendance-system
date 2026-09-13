@@ -334,13 +334,11 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 .scanner-viewport-container {
   position: relative;
   width: 100%;
-  max-width: 640px;
-  height: 480px;
-  margin: 0 auto;
-  border-radius: var(--radius-lg);
+  height: 440px;
+  border-radius: 20px;
   overflow: hidden;
-  background: #090d16;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(37, 99, 235, 0.3);
+  background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(59, 130, 246, 0.25);
 }
 
 .video-feed {
@@ -350,49 +348,186 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   transform: scaleX(-1); /* Mirror camera for natural interaction */
 }
 
-.hud-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 1.5rem;
-}
-
 .scanner-target-box {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 260px;
-  height: 320px;
-  border: 2px dashed rgba(59, 130, 246, 0.8);
-  border-radius: 24px;
-  box-shadow: 0 0 25px rgba(37, 99, 235, 0.25);
-  animation: pulseTarget 2s infinite ease-in-out;
+  width: 250px;
+  height: 290px;
+  border: 2px dashed rgba(56, 189, 248, 0.7);
+  border-radius: 20px;
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.25), inset 0 0 20px rgba(56, 189, 248, 0.1);
+  animation: pulseTarget 2.5s infinite ease-in-out;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .scanner-target-box.success {
   border: 3px solid #10b981;
-  box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
-  animation: none;
+  box-shadow: 0 0 45px rgba(16, 185, 129, 0.6), inset 0 0 25px rgba(16, 185, 129, 0.25);
+  animation: popSuccess 0.4s ease-out;
+}
+
+.scanner-target-box.success .corner-tl,
+.scanner-target-box.success .corner-tr,
+.scanner-target-box.success .corner-bl,
+.scanner-target-box.success .corner-br {
+  border-color: #10b981;
+  box-shadow: 0 0 10px #10b981;
 }
 
 .scanner-target-box.unknown {
   border: 3px solid #ef4444;
-  box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
-  animation: shake 0.4s ease-in-out;
+  box-shadow: 0 0 45px rgba(239, 68, 68, 0.7), inset 0 0 25px rgba(239, 68, 68, 0.3);
+  animation: shake 0.45s ease-in-out;
+}
+
+.scanner-target-box.unknown .corner-tl,
+.scanner-target-box.unknown .corner-tr,
+.scanner-target-box.unknown .corner-bl,
+.scanner-target-box.unknown .corner-br {
+  border-color: #ef4444;
+  box-shadow: 0 0 10px #ef4444;
+}
+
+/* Floating AI Face Bounding Box Labels */
+.face-square-label-top {
+  position: absolute;
+  top: -42px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(12px);
+  color: #ffffff;
+  padding: 0.45rem 1.1rem;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  z-index: 25;
+  animation: fadeInDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.face-square-label-top.label-success {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  border-color: #6ee7b7;
+  color: #ffffff;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.55);
+}
+
+.face-square-label-top.label-unknown {
+  background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%);
+  border-color: #fca5a5;
+  color: #ffffff;
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.6);
+}
+
+.face-square-label-top.label-blocked {
+  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+  border-color: #fdba74;
+  color: #ffffff;
+  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.6);
+}
+
+.face-square-label-bottom {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(12px);
+  color: #ffffff;
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  z-index: 25;
+  animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.face-square-label-bottom.label-success {
+  background: rgba(6, 95, 70, 0.95);
+  color: #a7f3d0;
+  border-color: #10b981;
+}
+
+.face-square-label-bottom.label-unknown {
+  background: rgba(153, 27, 27, 0.95);
+  color: #fecaca;
+  border-color: #ef4444;
+}
+
+.face-square-label-bottom.label-blocked {
+  background: rgba(154, 52, 18, 0.95);
+  color: #ffedd5;
+  border-color: #ea580c;
+}
+
+/* Multi Face Detection Hazard Boxes */
+.multi-face-box {
+  position: absolute;
+  border: 2.5px dashed #ea580c;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(234, 88, 12, 0.45);
+  animation: shake 0.6s infinite ease-in-out;
+  z-index: 18;
+}
+
+.scanner-blocked-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translate(-50%, -12px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translate(-50%, 12px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@keyframes popSuccess {
+  0% { transform: translate(-50%, -50%) scale(0.95); }
+  50% { transform: translate(-50%, -50%) scale(1.04); }
+  100% { transform: translate(-50%, -50%) scale(1); }
 }
 
 /* Biometric HUD Corner Reticles */
-.corner-tl { position: absolute; top: -2px; left: -2px; width: 24px; height: 24px; border-top: 4px solid #3b82f6; border-left: 4px solid #3b82f6; border-top-left-radius: 12px; }
-.corner-tr { position: absolute; top: -2px; right: -2px; width: 24px; height: 24px; border-top: 4px solid #3b82f6; border-right: 4px solid #3b82f6; border-top-right-radius: 12px; }
-.corner-bl { position: absolute; bottom: -2px; left: -2px; width: 24px; height: 24px; border-bottom: 4px solid #3b82f6; border-left: 4px solid #3b82f6; border-bottom-left-radius: 12px; }
-.corner-br { position: absolute; bottom: -2px; right: -2px; width: 24px; height: 24px; border-bottom: 4px solid #3b82f6; border-right: 4px solid #3b82f6; border-bottom-right-radius: 12px; }
+.corner-tl { position: absolute; top: -3px; left: -3px; width: 26px; height: 26px; border-top: 4px solid #38bdf8; border-left: 4px solid #38bdf8; border-top-left-radius: 12px; }
+.corner-tr { position: absolute; top: -3px; right: -3px; width: 26px; height: 26px; border-top: 4px solid #38bdf8; border-right: 4px solid #38bdf8; border-top-right-radius: 12px; }
+.corner-bl { position: absolute; bottom: -3px; left: -3px; width: 26px; height: 26px; border-bottom: 4px solid #38bdf8; border-left: 4px solid #38bdf8; border-bottom-left-radius: 12px; }
+.corner-br { position: absolute; bottom: -3px; right: -3px; width: 26px; height: 26px; border-bottom: 4px solid #38bdf8; border-right: 4px solid #38bdf8; border-bottom-right-radius: 12px; }
 
 .laser-scan-line {
   position: absolute;
@@ -400,26 +535,26 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   left: 0;
   width: 100%;
   height: 3px;
-  background: linear-gradient(90deg, transparent, #38bdf8, #2563eb, transparent);
-  box-shadow: 0 0 15px #38bdf8;
+  background: linear-gradient(90deg, transparent, #38bdf8, #818cf8, transparent);
+  box-shadow: 0 0 18px #38bdf8;
   animation: scanLaser 2.2s infinite ease-in-out;
 }
 
 @keyframes scanLaser {
-  0% { top: 0%; opacity: 0.8; }
+  0% { top: 2%; opacity: 0.6; }
   50% { top: 96%; opacity: 1; }
-  100% { top: 0%; opacity: 0.8; }
+  100% { top: 2%; opacity: 0.6; }
 }
 
 @keyframes pulseTarget {
-  0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+  0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
   50% { opacity: 1; transform: translate(-50%, -50%) scale(1.02); }
 }
 
 @keyframes shake {
   0%, 100% { transform: translate(-50%, -50%); }
-  20%, 60% { transform: translate(-54%, -50%); }
-  40%, 80% { transform: translate(-46%, -50%); }
+  20%, 60% { transform: translate(-55%, -50%); }
+  40%, 80% { transform: translate(-45%, -50%); }
 }
 
 /* Recognition Live Toast / Overlay */
@@ -534,3 +669,18 @@ h1, h2, h3, h4, h5, h6, .brand-font {
     height: 270px;
   }
 }
+
+/* Animations */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+

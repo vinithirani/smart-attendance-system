@@ -166,6 +166,32 @@ export const api = {
     return mockService.addStudent(data);
   },
 
+  async updateStudent(studentId, data) {
+    if (isBackendLive) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/students/${studentId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (res.ok) return await res.json();
+      } catch (e) {}
+    }
+    return mockService.updateStudent(studentId, data);
+  },
+
+  async deleteStudent(studentId) {
+    if (isBackendLive) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/students/${studentId}`, {
+          method: 'DELETE'
+        });
+        if (res.ok) return await res.json();
+      } catch (e) {}
+    }
+    return mockService.deleteStudent(studentId);
+  },
+
   // --- FACE BIOMETRIC ENROLLMENT ---
   async enrollStudentFace(studentId, faceData = null) {
     if (isBackendLive) {
@@ -194,6 +220,10 @@ export const api = {
       } catch (e) {}
     }
     return mockService.startAttendanceSession(payload, user);
+  },
+
+  async getActiveSession(facultyId = null) {
+    return mockService.getActiveSession(facultyId);
   },
 
   async recognizeFace(sessionId, simulateType = "matched_enrolled", targetStudentId = null) {

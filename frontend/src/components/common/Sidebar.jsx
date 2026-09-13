@@ -91,14 +91,10 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
             </NavLink>
             <NavLink to="/admin/students" className="nav-link-custom" onClick={closeMobile}>
               <GraduationCap size={18} />
-              <span>Student Management</span>
+              <span>Student Records & Registration</span>
             </NavLink>
 
             <div className="nav-category">Attendance Monitoring</div>
-            <NavLink to="/admin/faculty-attendance" className="nav-link-custom" onClick={closeMobile}>
-              <Clock size={18} />
-              <span>7:00 AM Faculty Log</span>
-            </NavLink>
             <NavLink to="/admin/student-attendance" className="nav-link-custom" onClick={closeMobile}>
               <CheckSquare size={18} />
               <span>Student Attendance</span>
