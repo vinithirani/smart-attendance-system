@@ -59,7 +59,7 @@ export default function TopNavbar({ setMobileOpen }) {
       <div className="d-flex align-items-center gap-2 gap-sm-3">
         {/* GitHub Link */}
         <a
-          href="https://github.com"
+          href="https://github.com/vinithirani/smart-attendance-system"
           target="_blank"
           rel="noreferrer"
           className="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 px-2 px-sm-3 py-1"

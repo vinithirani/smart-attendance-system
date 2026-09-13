@@ -77,7 +77,7 @@ export default function LandingPage() {
             </ul>
             <div className="d-flex align-items-center gap-2">
               <a 
-                href="https://github.com" 
+                href="https://github.com/vinithirani/smart-attendance-system" 
                 target="_blank" 
                 rel="noreferrer" 
                 className="btn btn-outline-dark btn-sm d-flex align-items-center gap-1 px-3 py-2 fw-semibold rounded-3"
@@ -120,7 +120,7 @@ export default function LandingPage() {
                   Login to System <ArrowRight size={18} />
                 </Link>
                 <a 
-                  href="https://github.com" 
+                  href="https://github.com/vinithirani/smart-attendance-system" 
                   target="_blank" 
                   rel="noreferrer" 
                   className="btn btn-outline-dark px-4 py-3 d-inline-flex align-items-center gap-2 rounded-3 fw-semibold shadow-sm"
@@ -349,7 +349,7 @@ export default function LandingPage() {
               </p>
               <div className="d-flex flex-wrap gap-2 mt-3">
                 <a 
-                  href="https://github.com" 
+                  href="https://github.com/vinithirani/smart-attendance-system" 
                   target="_blank" 
                   rel="noreferrer" 
                   className="btn btn-sm btn-outline-light d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill"

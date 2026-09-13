@@ -176,11 +176,8 @@ The system is built on a normalized PostgreSQL schema (`database/schema.sql`):
 ### 🐙 1. GitHub Repository & CI/CD Setup
 1. Initialize or push the project to your GitHub repository:
    ```bash
-   git init
-   git add .
-   git commit -m "feat: complete smart attendance system with face recognition"
+   git remote add origin https://github.com/vinithirani/smart-attendance-system.git
    git branch -M main
-   git remote add origin https://github.com/YOUR_USERNAME/smart-attendance-system.git
    git push -u origin main
    ```
 2. Automated GitHub Actions CI workflow (`.github/workflows/ci.yml`) will automatically trigger on every push and pull request to validate frontend builds and backend syntax.

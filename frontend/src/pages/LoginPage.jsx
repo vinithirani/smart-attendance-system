@@ -234,7 +234,7 @@ export default function LoginPage() {
         <div className="d-flex align-items-center justify-content-between mt-4 text-muted small px-2">
           <Link to="/" className="text-decoration-none text-muted fw-semibold">← Return to Home</Link>
           <div className="d-flex align-items-center gap-3">
-            <a href="https://github.com" target="_blank" rel="noreferrer" className="text-decoration-none text-muted d-flex align-items-center gap-1 hover-text-primary">
+            <a href="https://github.com/vinithirani/smart-attendance-system" target="_blank" rel="noreferrer" className="text-decoration-none text-muted d-flex align-items-center gap-1 hover-text-primary">
               <Github size={14} /> GitHub
             </a>
             <a href="https://vercel.com" target="_blank" rel="noreferrer" className="text-decoration-none text-muted d-flex align-items-center gap-1 hover-text-primary">
