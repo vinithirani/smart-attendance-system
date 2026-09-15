@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 
 export default function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+
   const features = [
     { title: "Face Recognition", desc: "High-accuracy biometric face detection and verification using 128-d deep neural embeddings.", icon: Cpu, color: "#2563eb" },
     { title: "Automated Attendance", desc: "Instant automated student attendance logging with zero manual roll call overhead.", icon: CheckCheck, color: "#10b981" },
@@ -64,29 +66,34 @@ export default function LandingPage() {
             </div>
           </Link>
 
-          <button className="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#landingNav">
+          <button 
+            className="navbar-toggler border-0 p-2" 
+            type="button" 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle navigation"
+          >
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          <div className="collapse navbar-collapse" id="landingNav">
-            <ul className="navbar-nav mx-auto mb-2 mb-lg-0 fw-semibold gap-lg-3">
-              <li className="nav-item"><a className="nav-link text-slate-700" href="#home">Home</a></li>
-              <li className="nav-item"><a className="nav-link text-slate-700" href="#features">Features</a></li>
-              <li className="nav-item"><a className="nav-link text-slate-700" href="#how-it-works">How It Works</a></li>
-              <li className="nav-item"><a className="nav-link text-slate-700" href="#benefits">Benefits</a></li>
+          <div className={`collapse navbar-collapse ${mobileMenuOpen ? 'show' : ''}`} id="landingNav">
+            <ul className="navbar-nav mx-auto my-3 my-lg-0 fw-semibold gap-lg-3">
+              <li className="nav-item"><a className="nav-link text-slate-700" href="#home" onClick={() => setMobileMenuOpen(false)}>Home</a></li>
+              <li className="nav-item"><a className="nav-link text-slate-700" href="#features" onClick={() => setMobileMenuOpen(false)}>Features</a></li>
+              <li className="nav-item"><a className="nav-link text-slate-700" href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>How It Works</a></li>
+              <li className="nav-item"><a className="nav-link text-slate-700" href="#benefits" onClick={() => setMobileMenuOpen(false)}>Benefits</a></li>
             </ul>
-            <div className="d-flex align-items-center gap-2">
+            <div className="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2 pt-2 pt-lg-0 border-top border-lg-0">
               <a 
                 href="https://github.com/vinithirani/smart-attendance-system" 
                 target="_blank" 
                 rel="noreferrer" 
-                className="btn btn-outline-dark btn-sm d-flex align-items-center gap-1 px-3 py-2 fw-semibold rounded-3"
+                className="btn btn-outline-dark btn-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 fw-semibold rounded-3"
                 title="View Source on GitHub"
               >
                 <Github size={16} />
                 <span>GitHub</span>
               </a>
-              <Link to="/login" className="btn btn-primary-custom px-4">
+              <Link to="/login" className="btn btn-primary-custom px-4 d-flex align-items-center justify-content-center gap-2">
                 Login to Portal <ArrowRight size={16} />
               </Link>
             </div>
@@ -95,9 +102,9 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section id="home" className="hero-gradient py-5 py-lg-6">
-        <div className="container py-4">
-          <div className="row align-items-center g-5">
+      <section id="home" className="hero-gradient py-4 py-lg-6">
+        <div className="container py-2 py-md-4">
+          <div className="row align-items-center g-4 g-lg-5">
             <div className="col-lg-7">
               <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
                 <div className="hero-badge">
@@ -108,75 +115,59 @@ export default function LandingPage() {
                   <span>Vercel Edge Ready</span>
                 </div>
               </div>
-              <h1 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.4rem)', lineHeight: 1.15, fontWeight: 800, color: '#0f172a' }} className="mb-3">
+              <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.4rem)', lineHeight: 1.15, fontWeight: 800, color: '#0f172a' }} className="mb-3">
                 Smart Attendance System Using <span style={{ color: '#2563eb' }}>Face Recognition</span>
               </h1>
-              <p className="lead text-muted mb-4" style={{ fontSize: '1.15rem', maxWidth: '600px' }}>
+              <p className="lead text-muted mb-4" style={{ fontSize: '1.05rem', maxWidth: '600px' }}>
                 Automated, accurate and secure attendance management powered by AI-based face recognition. Built with role-separated portals for Admin/HOD and Faculty.
               </p>
               
-              <div className="d-flex flex-wrap gap-3 mb-4">
-                <Link to="/login" className="btn btn-primary-custom px-4 py-3" style={{ fontSize: '1rem' }}>
+              <div className="d-flex flex-wrap gap-2 gap-sm-3 mb-4">
+                <Link to="/login" className="btn btn-primary-custom px-4 py-3 hero-cta-btn" style={{ fontSize: '1rem' }}>
                   Login to System <ArrowRight size={18} />
                 </Link>
                 <a 
                   href="https://github.com/vinithirani/smart-attendance-system" 
                   target="_blank" 
                   rel="noreferrer" 
-                  className="btn btn-outline-dark px-4 py-3 d-inline-flex align-items-center gap-2 rounded-3 fw-semibold shadow-sm"
+                  className="btn btn-outline-dark px-4 py-3 hero-cta-btn d-inline-flex align-items-center gap-2 rounded-3 fw-semibold shadow-sm"
                   style={{ fontSize: '1rem', background: '#ffffff', borderColor: '#cbd5e1' }}
                 >
                   <Github size={18} /> View Repository
                 </a>
-                <a href="#how-it-works" className="btn btn-secondary-custom px-4 py-3" style={{ fontSize: '1rem' }}>
+                <a href="#how-it-works" className="btn btn-secondary-custom px-4 py-3 hero-cta-btn" style={{ fontSize: '1rem' }}>
                   <PlayCircle size={18} /> Explore System
                 </a>
               </div>
 
-              {/* Highlights */}
-              <div className="row g-3 pt-3 border-top">
-                <div className="col-sm-4">
-                  <div className="fw-bold" style={{ fontSize: '1.4rem', color: '#2563eb' }}>99.2%</div>
-                  <div className="text-muted small">Face Recognition Precision</div>
+              {/* Highlights - Compact 3-col responsive stats */}
+              <div className="hero-stats-row mb-4 mb-lg-0">
+                <div className="hero-stat-card">
+                  <div className="hero-stat-val text-primary">99.2%</div>
+                  <div className="hero-stat-lbl">Face Recognition Precision</div>
                 </div>
-                <div className="col-sm-4">
-                  <div className="fw-bold" style={{ fontSize: '1.4rem', color: '#10b981' }}>&lt; 0.5s</div>
-                  <div className="text-muted small">Instant Attendance Marking</div>
+                <div className="hero-stat-card">
+                  <div className="hero-stat-val text-success">&lt; 0.5s</div>
+                  <div className="hero-stat-lbl">Instant Attendance Marking</div>
                 </div>
-                <div className="col-sm-4">
-                  <div className="fw-bold" style={{ fontSize: '1.4rem', color: '#7c3aed' }}>100%</div>
-                  <div className="text-muted small">Proxy Prevention</div>
+                <div className="hero-stat-card">
+                  <div className="hero-stat-val" style={{ color: '#7c3aed' }}>100%</div>
+                  <div className="hero-stat-lbl">Proxy Prevention</div>
                 </div>
               </div>
             </div>
 
             {/* Visual AI Graphic */}
             <div className="col-lg-5">
-              <div 
-                className="position-relative p-4 rounded-4 shadow-xl border bg-white"
-                style={{
-                  background: 'linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%)',
-                }}
-              >
-                <div className="position-relative rounded-3 overflow-hidden" style={{ background: '#090d16', minHeight: '300px' }}>
+              <div className="hero-visual-card">
+                <div className="hero-image-frame">
                   <img 
-                    src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600" 
-                    alt="Facial AI Detection"
-                    style={{ width: '100%', height: '300px', objectFit: 'cover', opacity: 0.85 }}
+                    src="/hero-male-employee.jpg" 
+                    alt="Employee Facial Biometric Scan"
                   />
-                  {/* Bounding box illustration */}
-                  <div 
-                    style={{
-                      position: 'absolute',
-                      top: '20%',
-                      left: '28%',
-                      width: '44%',
-                      height: '56%',
-                      border: '2px dashed #38bdf8',
-                      borderRadius: '16px',
-                      boxShadow: '0 0 20px rgba(56, 189, 248, 0.5)'
-                    }}
-                  >
+                  
+                  {/* Realtime Detection HUD Overlay Box */}
+                  <div className="hero-hud-reticle">
                     <div className="corner-tl"></div>
                     <div className="corner-tr"></div>
                     <div className="corner-bl"></div>
@@ -184,31 +175,19 @@ export default function LandingPage() {
                     <div className="laser-scan-line"></div>
                   </div>
 
-                  <div 
-                    style={{
-                      position: 'absolute',
-                      bottom: '12px',
-                      left: '12px',
-                      right: '12px',
-                      background: 'rgba(6, 78, 59, 0.9)',
-                      border: '1px solid #10b981',
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      color: 'white',
-                      fontSize: '0.8rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between'
-                    }}
-                  >
-                    <span>✓ Devanshi Patel (FAC-MCA-001)</span>
-                    <span className="badge bg-success">Recognized</span>
+                  {/* Recognition Live Badge */}
+                  <div className="hero-status-pill">
+                    <div className="d-flex align-items-center gap-1 gap-sm-2">
+                      <span className="text-success fw-bold">✓</span>
+                      <span className="fw-semibold text-truncate">Face Biometric Verified</span>
+                    </div>
+                    <span className="badge bg-success px-2 py-1 flex-shrink-0">99.8% Match</span>
                   </div>
                 </div>
 
                 <div className="d-flex justify-content-between align-items-center mt-3 pt-2">
                   <div className="d-flex align-items-center gap-2">
-                    <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#10b981' }}></span>
+                    <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#10b981', boxShadow: '0 0 8px #10b981' }}></span>
                     <span className="small fw-semibold text-muted">Biometric AI Engine Active</span>
                   </div>
                   <span className="badge bg-primary">PostgreSQL Connected</span>

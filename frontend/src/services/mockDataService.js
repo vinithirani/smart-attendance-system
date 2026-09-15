@@ -6,7 +6,7 @@
 
 const INITIAL_USERS = [
   { id: 1, name: "Dr. Rajesh Sharma (HOD)", email: "admin@smartattendance.edu", role: "admin", status: "active", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" },
-  { id: 2, name: "Devanshi Patel", email: "devanshi@smartattendance.edu", role: "faculty", status: "active", avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150" },
+  { id: 2, name: "Devanshi Patel", email: "devanshi@smartattendance.edu", role: "faculty", status: "active", avatar: "/hero-biometric.jpg" },
   { id: 3, name: "Risha Tiwari", email: "risha@smartattendance.edu", role: "faculty", status: "active", avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150" },
   { id: 4, name: "Dhruv Patel", email: "dhruv@smartattendance.edu", role: "faculty", status: "active", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" },
   { id: 5, name: "Shyam Chavda", email: "shyam@smartattendance.edu", role: "faculty", status: "active", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150" },
