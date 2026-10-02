@@ -43,36 +43,77 @@ export default function FaceEnrollmentPage() {
     loadStudents();
   }, [user]);
 
-  // Start Camera Stream
-  const startCamera = async () => {
+  const [facingMode, setFacingMode] = useState('user');
+
+  // Start Camera Stream with mobile constraints and fallbacks
+  const startCamera = async (targetFacing = facingMode) => {
     setPermissionError(false);
+    stopCamera();
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setPermissionError(true);
+      setCameraActive(true);
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' }
+        video: {
+          facingMode: targetFacing,
+          width: { ideal: 640 },
+          height: { ideal: 480 }
+        },
+        audio: false
       });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
+        videoRef.current.setAttribute('playsinline', 'true');
+        videoRef.current.setAttribute('webkit-playsinline', 'true');
+        videoRef.current.setAttribute('autoplay', 'true');
+        videoRef.current.setAttribute('muted', 'true');
+        await videoRef.current.play().catch(e => console.warn(e));
         setCameraActive(true);
       }
     } catch (err) {
-      console.warn("Camera permission denied or hardware unavailable, enabling interactive virtual preview mode", err);
-      setPermissionError(true);
-      setCameraActive(true); // virtual fallback mode
-      addToast('Running in AI Biometric Studio simulation mode', 'info');
+      console.warn("Primary camera stream failed, trying generic fallback:", err);
+      try {
+        const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        if (videoRef.current) {
+          videoRef.current.srcObject = fallbackStream;
+          videoRef.current.setAttribute('playsinline', 'true');
+          videoRef.current.setAttribute('webkit-playsinline', 'true');
+          videoRef.current.setAttribute('autoplay', 'true');
+          videoRef.current.setAttribute('muted', 'true');
+          await videoRef.current.play().catch(e => console.warn(e));
+          setCameraActive(true);
+        }
+      } catch (fallbackErr) {
+        setPermissionError(true);
+        setCameraActive(true); // virtual interactive mode
+        addToast('Running in AI Biometric Studio simulation mode', 'info');
+      }
     }
+  };
+
+  const handleFlipCamera = async () => {
+    const nextMode = facingMode === 'user' ? 'environment' : 'user';
+    setFacingMode(nextMode);
+    await startCamera(nextMode);
+    addToast(`Camera flipped to ${nextMode === 'user' ? 'Front' : 'Rear'}`, 'info');
   };
 
   const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
-      const tracks = videoRef.current.srcObject.getTracks();
-      tracks.forEach(track => track.stop());
+      try {
+        const tracks = videoRef.current.srcObject.getTracks();
+        tracks.forEach(track => track.stop());
+      } catch (e) {}
     }
     setCameraActive(false);
   };
 
   useEffect(() => {
-    startCamera();
+    startCamera('user');
     return () => stopCamera();
   }, []);
 
@@ -179,7 +220,17 @@ export default function FaceEnrollmentPage() {
                     <span className="badge bg-dark bg-opacity-75 text-white border border-secondary">
                       ● LIVE BIOMETRIC FEED
                     </span>
-                    <span className="badge bg-primary text-white">128-D VECTOR ACTIVE</span>
+                    <div className="d-flex gap-2">
+                      <button 
+                        type="button" 
+                        onClick={handleFlipCamera} 
+                        className="btn btn-dark btn-sm py-0 px-2 text-white border border-secondary"
+                        style={{ fontSize: '0.72rem' }}
+                      >
+                        🔄 {facingMode === 'user' ? 'Front' : 'Rear'}
+                      </button>
+                      <span className="badge bg-primary text-white">128-D VECTOR ACTIVE</span>
+                    </div>
                   </div>
 
                   <div className={`scanner-target-box ${enrollmentStatus === 'success' ? 'success' : ''}`}>

@@ -5,17 +5,37 @@ import {
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { useNotification } from '../../context/NotificationContext';
+import { ADMIN_FACULTIES_DATA } from '../../components/charts/AttendanceCharts';
 
 export default function ReportsPage() {
-  const [reportType, setReportType] = useState('daily'); // 'daily', 'monthly', 'course', 'faculty', 'yearly'
-  const [selectedCourse, setSelectedCourse] = useState('all');
+  const [reportType, setReportType] = useState('faculty_subject'); // 'faculty_subject', 'daily', 'monthly', 'course', 'yearly'
+  const [selectedFacultyId, setSelectedFacultyId] = useState('all');
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [reportData, setReportData] = useState([]);
 
   const { addToast } = useNotification();
 
   const generateReport = () => {
-    if (reportType === 'daily') {
+    if (reportType === 'faculty_subject') {
+      const rows = [];
+      let idx = 1;
+      ADMIN_FACULTIES_DATA.forEach(fac => {
+        if (selectedFacultyId === 'all' || Number(selectedFacultyId) === fac.id) {
+          fac.subjects.forEach(sub => {
+            rows.push({
+              id: idx++,
+              entity: `${sub.name} (${sub.code})`,
+              type: `Subject • ${fac.course}`,
+              time: `${sub.total_lectures} Lectures Total`,
+              faculty: fac.name,
+              status: `${sub.present} Present / ${sub.absent} Absent`,
+              rate: `${sub.attendance}%`
+            });
+          });
+        }
+      });
+      setReportData(rows);
+    } else if (reportType === 'daily') {
       setReportData([
         { id: 1, entity: "Aarav Mehta (MCA)", type: "Student", time: "08:02 AM", faculty: "Devanshi Patel", status: "Present", rate: "94%" },
         { id: 2, entity: "Ananya Sharma (MCA)", type: "Student", time: "08:03 AM", faculty: "Devanshi Patel", status: "Present", rate: "96%" },
@@ -33,28 +53,27 @@ export default function ReportsPage() {
         { id: 3, entity: "B.Tech - Sem 4", type: "Course Batch", time: "May 2026", faculty: "Dhruv Patel", status: "91.2% Attendance", rate: "Active" },
         { id: 4, entity: "M.Tech - Sem 2", type: "Course Batch", time: "May 2026", faculty: "Shyam Chavda", status: "96.0% Attendance", rate: "Active" },
       ]);
-    } else if (reportType === 'faculty') {
+    } else if (reportType === 'course') {
       setReportData([
-        { id: 1, entity: "Devanshi Patel", type: "Lead Faculty", time: "08:00 AM - 08:50 AM", faculty: "MCA Sem 2 Div A", status: "5 Present / 1 Absent", rate: "92.5%" },
-        { id: 2, entity: "Risha Tiwari", type: "Lead Faculty", time: "09:00 AM - 09:50 AM", faculty: "BCA Sem 2 Div A", status: "3 Present / 0 Absent", rate: "100%" },
-        { id: 3, entity: "Dhruv Patel", type: "Lead Faculty", time: "10:00 AM - 10:50 AM", faculty: "B.Tech Sem 4 Div A", status: "2 Present / 1 Absent", rate: "85%" },
-        { id: 4, entity: "Shyam Chavda", type: "Lead Faculty", time: "11:00 AM - 11:50 AM", faculty: "M.Tech Sem 2 Div A", status: "2 Present / 0 Absent", rate: "100%" },
+        { id: 1, entity: "MCA - Sem 2 Div A", type: "Full Course", time: "110 Lectures", faculty: "Devanshi Patel", status: "91.2% Aggregate", rate: "Compliant" },
+        { id: 2, entity: "BCA - Sem 2 Div A", type: "Full Course", time: "95 Lectures", faculty: "Risha Tiwari", status: "89.5% Aggregate", rate: "Compliant" },
+        { id: 3, entity: "B.Tech - Sem 4 Div A", type: "Full Course", time: "102 Lectures", faculty: "Dhruv Patel", status: "90.8% Aggregate", rate: "Compliant" },
+        { id: 4, entity: "M.Tech - Sem 2 Div A", type: "Full Course", time: "82 Lectures", faculty: "Shyam Chavda", status: "96.6% Aggregate", rate: "Compliant" },
       ]);
     } else {
       setReportData([
         { id: 1, entity: "Academic Year 2025-26", type: "Institutional Annual", time: "Full Year", faculty: "All Departments", status: "93.4% Cumulative", rate: "Audited" }
       ]);
     }
-    addToast('Report generated successfully', 'info');
   };
 
   useEffect(() => {
     generateReport();
-  }, [reportType, selectedCourse, selectedDate]);
+  }, [reportType, selectedFacultyId, selectedDate]);
 
   const handleExportCSV = () => {
     if (reportData.length === 0) return;
-    const headers = ["ID", "Entity / Student / Faculty", "Classification", "Time Window", "Supervising Faculty / Scope", "Attendance Outcome", "Rate / Status"];
+    const headers = ["ID", "Entity / Subject Name", "Classification", "Total Lectures / Time", "Supervising Faculty", "Attendance Outcome", "Attendance Rate"];
     const rows = reportData.map(r => [
       r.id,
       `"${r.entity}"`,
@@ -69,7 +88,7 @@ export default function ReportsPage() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `attendance_report_${reportType}_${selectedDate}.csv`);
+    link.setAttribute("download", `admin_attendance_report_${reportType}_${selectedDate}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -83,7 +102,7 @@ export default function ReportsPage() {
         <div>
           <h2 className="brand-font mb-1">Institutional Attendance Reports</h2>
           <p className="text-muted small mb-0">
-            Generate and export daily, monthly, yearly, course-wise, and faculty-wise attendance audits.
+            Generate and export daily, monthly, yearly, course-wise, and faculty subject-wise attendance audits.
           </p>
         </div>
         <div className="d-flex gap-2">
@@ -100,11 +119,11 @@ export default function ReportsPage() {
       <div className="custom-card mb-4 p-2 bg-light">
         <div className="d-flex flex-wrap gap-2">
           {[
-            { key: 'daily', label: 'Daily Report' },
-            { key: 'monthly', label: 'Monthly Report' },
-            { key: 'course', label: 'Course-wise Report' },
-            { key: 'faculty', label: 'Faculty-wise Report' },
-            { key: 'yearly', label: 'Yearly Report' }
+            { key: 'faculty_subject', label: '👨‍🏫 Faculty Subject-wise Report' },
+            { key: 'course', label: '🏢 Course / Department Report' },
+            { key: 'daily', label: '📅 Daily Attendance Log' },
+            { key: 'monthly', label: '📊 Monthly Report' },
+            { key: 'yearly', label: '🏛️ Yearly Cumulative Audit' }
           ].map(tab => (
             <button
               key={tab.key}
@@ -119,12 +138,42 @@ export default function ReportsPage() {
         </div>
       </div>
 
+      {/* Filter Ribbon for Faculty Subject-Wise Report */}
+      {reportType === 'faculty_subject' && (
+        <div className="custom-card mb-4 p-3 bg-white shadow-sm border">
+          <div className="row align-items-center g-3">
+            <div className="col-md-6">
+              <label className="form-label small fw-bold text-slate-700">Filter by Faculty Member:</label>
+              <select
+                className="form-select bg-light"
+                value={selectedFacultyId}
+                onChange={(e) => setSelectedFacultyId(e.target.value)}
+              >
+                <option value="all">All Faculty Professors & Subjects</option>
+                {ADMIN_FACULTIES_DATA.map(f => (
+                  <option key={f.id} value={f.id}>
+                    {f.name} ({f.course}) — {f.subjects.length} Subjects
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="col-md-6 text-md-end pt-md-4">
+              <span className="badge bg-success px-3 py-2">
+                Showing {reportData.length} Curriculum Subjects
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Dynamic Report Table */}
-      <div className="custom-card p-0 overflow-hidden shadow-sm">
+      <div className="custom-card p-0 overflow-hidden shadow-sm bg-white">
         <div className="p-4 border-bottom bg-white d-flex justify-content-between align-items-center">
           <div>
-            <h5 className="fw-bold mb-0 text-capitalize">{reportType} Attendance Audit Report</h5>
-            <small className="text-muted">Generated for {selectedDate} • Scope: All Degree Programs</small>
+            <h5 className="fw-bold mb-0 text-capitalize">
+              {reportType === 'faculty_subject' ? 'Faculty & Subject-Wise Attendance Audit Report' : `${reportType} Attendance Audit Report`}
+            </h5>
+            <small className="text-muted">Generated for {selectedDate} • Scope: Institutional Degree Programs</small>
           </div>
           <span className="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
             Verified Record
@@ -135,12 +184,12 @@ export default function ReportsPage() {
           <table className="custom-table">
             <thead>
               <tr>
-                <th>Entity / Subject</th>
+                <th>Subject / Entity</th>
                 <th>Classification</th>
-                <th>Time / Date</th>
-                <th>Supervising Authority</th>
-                <th>Status / Outcome</th>
-                <th className="text-end">Percentage</th>
+                <th>Lectures / Time</th>
+                <th>Supervising Faculty</th>
+                <th>Attendance Outcome</th>
+                <th className="text-end">Attendance Rate</th>
               </tr>
             </thead>
             <tbody>
@@ -149,9 +198,9 @@ export default function ReportsPage() {
                   <td className="fw-bold text-dark">{row.entity}</td>
                   <td><span className="badge bg-light text-dark border">{row.type}</span></td>
                   <td className="text-muted small">{row.time}</td>
-                  <td className="text-dark small">{row.faculty}</td>
+                  <td className="text-dark small fw-semibold">{row.faculty}</td>
                   <td>
-                    <span className={row.status.includes('Present') || row.status.includes('%') ? 'badge-present' : 'badge-absent'}>
+                    <span className={row.status.includes('Present') || row.status.includes('%') || row.status.includes('Compliant') ? 'badge-present' : 'badge-absent'}>
                       {row.status}
                     </span>
                   </td>

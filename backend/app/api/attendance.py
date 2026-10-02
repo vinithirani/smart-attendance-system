@@ -307,3 +307,66 @@ def get_session_student_roster(session_id: int, db: Session = Depends(get_db)):
         },
         "roster": roster
     }
+
+@router.post("/sessions/{session_id}/send-notifications")
+def send_attendance_email_notifications(
+    session_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    from app.services.email_service import send_session_attendance_emails
+
+    session = db.query(AttendanceSession).filter(AttendanceSession.id == session_id).first()
+    if not session:
+        raise HTTPException(status_code=404, detail="Attendance session not found")
+
+    students = db.query(Student).filter(
+        Student.course_id == session.course_id,
+        Student.semester == session.semester,
+        Student.division == session.division,
+        Student.status == "active"
+    ).all()
+
+    attendance_map = {
+        rec.student_id: rec for rec in db.query(StudentAttendance).filter(StudentAttendance.session_id == session_id).all()
+    }
+
+    students_roster = []
+    for st in students:
+        rec = attendance_map.get(st.id)
+        students_roster.append({
+            "name": st.name,
+            "enrollment_number": st.enrollment_number,
+            "email": st.email or "vickyhirani8842@gmail.com",
+            "status": rec.status if rec else "absent",
+            "attendance_time": str(rec.recognition_time) if rec and rec.recognition_time else None
+        })
+
+    session_info = {
+        "id": session.id,
+        "subject": session.subject,
+        "course_name": session.course.course_name if session.course else "MCA",
+        "semester": session.semester,
+        "division": session.division,
+        "date": str(session.date),
+        "total_enrolled": session.total_enrolled,
+        "present_count": session.present_count,
+        "absent_count": session.absent_count
+    }
+
+    result = send_session_attendance_emails(students_roster, session_info)
+
+    # Audit Log
+    db.add(AuditLog(
+        user_id=current_user.id,
+        user_name=current_user.name,
+        role=current_user.role,
+        action="SEND_ATTENDANCE_EMAILS",
+        entity_type="session",
+        entity_id=str(session.id),
+        new_value=f"Sent {result['total_emails_sent']} emails ({result['present_emails_sent']} present, {result['absent_emails_sent']} absent)"
+    ))
+    db.commit()
+
+    return result
+

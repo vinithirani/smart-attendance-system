@@ -264,6 +264,26 @@ export const api = {
     return mockService.manualOverride(sessionId, studentId, newStatus, reason, user);
   },
 
+  // --- ATTENDANCE EMAIL NOTIFICATIONS (PRESENT & ABSENT) ---
+  async sendAttendanceEmails(sessionId, sessionInfo = {}) {
+    if (isBackendLive) {
+      try {
+        const token = localStorage.getItem('smart_att_token');
+        const res = await fetch(`${API_BASE_URL}/attendance/sessions/${sessionId}/send-notifications`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          }
+        });
+        if (res.ok) return await res.json();
+      } catch (e) {
+        console.warn("Live email sending failed, using mock service", e);
+      }
+    }
+    return mockService.sendAttendanceEmails(sessionId, sessionInfo);
+  },
+
   // --- AUDIT LOGS ---
   async getAuditLogs() {
     if (isBackendLive) {
@@ -275,3 +295,4 @@ export const api = {
     return mockService.getAuditLogs();
   }
 };
+

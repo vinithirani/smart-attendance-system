@@ -376,20 +376,25 @@ class MockDataService {
     return { success: true, message: `Student ${deleted.name} deleted successfully` };
   }
 
-  enrollStudentFace(studentId) {
+  enrollStudentFace(studentId, capturedImage = null) {
     const st = this.students.find(s => s.id === Number(studentId));
     if (!st) throw new Error("Student not found");
     st.face_enrolled = true;
+    if (capturedImage) {
+      st.face_image = capturedImage;
+    }
+    st.enrolled_at = new Date().toISOString();
     this.lastEnrolledStudentId = st.id;
-    this.logAudit("faculty", "FACE_ENROLLMENT_COMPLETED", "student", String(st.id), `Face biometrics enrolled for ${st.name}`);
+    this.logAudit("faculty", "FACE_ENROLLMENT_COMPLETED", "student", String(st.id), `Face biometrics enrolled & registered for ${st.name} (${st.enrollment_number})`);
     this.saveState();
     return {
       success: true,
       message: "Face Successfully Enrolled",
       student_id: st.id,
       student_name: st.name,
+      student: st,
       confidence_score: 0.9945,
-      enrolled_at: new Date().toISOString()
+      enrolled_at: st.enrolled_at
     };
   }
 
@@ -552,6 +557,7 @@ class MockDataService {
       is_unknown: false,
       already_marked: false,
       student: targetStudent,
+      face_image: targetStudent.face_image || null,
       confidence: 0.9935,
       message: `Recognized: ${targetStudent.name} - Attendance Marked`,
       recognition_time: nowTime
@@ -648,6 +654,34 @@ class MockDataService {
       today_present_students: 14,
       today_absent_students: 2,
       total_enrolled_faces: enrolledFaces
+    };
+  }
+
+  sendAttendanceEmails(sessionId, sessionInfo = {}) {
+    const sess = this.sessions.find(s => s.id === Number(sessionId)) || this.activeSession;
+    const roster = this.getSessionRoster(sessionId);
+    const presentList = roster.roster ? roster.roster.filter(r => r.status === 'present') : [];
+    const absentList = roster.roster ? roster.roster.filter(r => r.status !== 'present') : [];
+
+    const presentCount = presentList.length || sess?.present_count || 32;
+    const absentCount = absentList.length || sess?.absent_count || 18;
+    const totalCount = presentCount + absentCount;
+    const rate = Math.round((presentCount / Math.max(1, totalCount)) * 100);
+
+    this.logAudit("faculty", "SEND_ATTENDANCE_EMAILS", "session", String(sessionId), `Sent ${totalCount} emails via SMTP (${presentCount} present, ${absentCount} absent, ${rate}% rate) to vickyhirani8842@gmail.com`);
+
+    return {
+      success: true,
+      present_emails_sent: presentCount,
+      absent_emails_sent: absentCount,
+      total_emails_sent: totalCount,
+      stats: {
+        total_enrolled: totalCount,
+        present_count: presentCount,
+        absent_count: absentCount,
+        attendance_rate: rate
+      },
+      sender: "vickyhirani8842@gmail.com"
     };
   }
 
